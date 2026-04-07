@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<HTML lang="ja">
+<HEAD>
+<META charset="utf-8" />
+<TITLE>BOKE防止プログラミング</TITLE>
+<SCRIPT>
+
+// 有名地の定義
+const tokyo = { lat: 35.681236, lng: 139.767125 };
+const osaka = { lat: 34.702485, lng: 135.495951 };
+const park = { lat: 35.68713, lng: 135.52629 };
+// const park = { lat: 35.40551, lng: 139.60801 };
+
+g_watchId = null;
+
+function startLocation() {
+    const element = document.getElementById("message");
+    const element_lat = document.getElementById("lat");
+    const element_lng = document.getElementById("lng");
+
+    // ブラウザが対応しているか確認
+    if (!navigator.geolocation) {
+        element.innerText = "お使いのブラウザは位置情報に対応していません。";
+        return;
+    }
+
+    element.innerText = "取得中...";
+
+    // 位置情報を取得開始
+    g_watchId = navigator.geolocation.watchPosition(
+        (position) => {
+            here_lat = position.coords.latitude;  // 緯度
+            here_lng = position.coords.longitude; // 経度
+            element.innerText = `緯度: ${here_lat}, 経度: ${here_lng}`;
+            element_lat.innerText = here_lat;
+            element_lng.innerText = here_lng;
+        },
+        (error) => {
+            element.innerText = `エラー: ${error.message}`;
+        },
+        {
+            // オプション設定
+            enableHighAccuracy: true, // 高精度な位置情報を要求（GPSなど）
+            timeout: 5000,            // タイムアウト時間（ミリ秒）
+            maximumAge: 0             // キャッシュされた位置情報の有効期限
+        }
+    );
+
+    return g_watchId;
+}
+
+function endLocation() {
+    navigator.geolocation.clearWatch(g_watchId);
+}
+
+function setMessage(hoge, lat2, lng2){
+    const element_lat = document.getElementById("lat");
+    here_lat = element_lat.innerHTML;
+
+    const element_lng = document.getElementById("lng");
+    here_lng = element_lng.innerHTML;
+
+    distance = getDistance(here_lat, here_lng, lat2, lng2);
+    const element = document.getElementById("message");
+    element.innerHTML = hoge + distance + "kmです！";
+}
+
+/**
+ * 2地点の緯度経度から距離(km)を計算する関数
+ */
+function getDistance(lat1, lng1, lat2, lng2) {
+  // 地球の半径 (km)
+  const R = 6371; 
+  
+  // 度をラジアンに変換
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+            
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c; // 距離 (km)
+  
+  return distance;
+}
+
+
+</SCRIPT>
+
+</HEAD>
+<BODY>
+<DIV id="message">Hello World !</DIV>
+<DIV id="lat">???</DIV>
+<DIV id="lng">???</DIV>
+<BUTTON type="button" onclick="startLocation()">開始</BUTTON>
+<BUTTON type="button" onclick="endLocation()">終了</BUTTON>
+<HR />
+<BUTTON type="button" onclick="setMessage('公園との距離は', park.lat, park.lng)">取得済みの情報を元に距離を計算</BUTTON>
+</BODY>
+</HTML>
