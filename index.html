@@ -8,10 +8,12 @@
 // 有名地の定義
 const tokyo = { lat: 35.681236, lng: 139.767125 };
 const osaka = { lat: 34.702485, lng: 135.495951 };
-const park = { lat: 35.68713, lng: 135.52629 };
-// const park = { lat: 35.40551, lng: 139.60801 };
+const park = { lat: 35.40551, lng: 139.60801 };
 
 g_watchId = null;
+
+// 1000ミリ秒（1秒）ごとに updateInfo を呼び出す 停止したい場合は clearInterval(intervalId);
+const intervalId = setInterval(setMessage, 1000, '公園との距離は', park.lat, park.lng);
 
 function startLocation() {
     const element = document.getElementById("message");
@@ -31,7 +33,7 @@ function startLocation() {
         (position) => {
             here_lat = position.coords.latitude;  // 緯度
             here_lng = position.coords.longitude; // 経度
-            element.innerText = `緯度: ${here_lat}, 経度: ${here_lng}`;
+            // element.innerText = `緯度: ${here_lat}, 経度: ${here_lng}`;
             element_lat.innerText = here_lat;
             element_lng.innerText = here_lng;
         },
@@ -97,6 +99,6 @@ function getDistance(lat1, lng1, lat2, lng2) {
 <BUTTON type="button" onclick="startLocation()">開始</BUTTON>
 <BUTTON type="button" onclick="endLocation()">終了</BUTTON>
 <HR />
-<BUTTON type="button" onclick="setMessage('公園との距離は', park.lat, park.lng)">取得済みの情報を元に距離を計算</BUTTON>
+<!-- <BUTTON type="button" onclick="setMessage('公園との距離は', park.lat, park.lng)">手動で距離を計算</BUTTON> -->
 </BODY>
 </HTML>
