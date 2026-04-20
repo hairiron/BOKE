@@ -6,9 +6,46 @@
 <SCRIPT>
 
 g_watchId = null;
+const g_detection_range = 1.2;    //km
 
 // 1000ミリ秒（1秒）ごとに updateInfo を呼び出す 停止したい場合は clearInterval(intervalId);
 const intervalId = setInterval(setMessage, 3000);
+
+function displayCheckinButton(id, name) {
+    const btn = document.getElementById('checkin_button');
+    btn.disabled = false;    // 有効化する
+    btn.textContent = name;
+}
+
+g_visitedPlaces = null;
+
+// データを取得して 配列に戻す
+function loadCheckinPlace(){
+    const savedData = localStorage.getItem('visitedPlaces');
+    g_visitedPlaces = JSON.parse(savedData);
+    if (g_visitedPlaces == null) {
+        g_visitedPlaces = [];
+    }
+}
+
+// 配列をデータとしてセーブする
+function saveCheckinPlace(){
+    // 配列を JSON文字列に変換して保存
+    localStorage.setItem('visitedPlaces', JSON.stringify(g_visitedPlaces));
+}
+
+function checkinPlace() {
+    const btn = document.getElementById('checkin_button');
+
+    loadCheckinPlace();
+
+    if (g_visitedPlaces.includes(btn.textContent)) {
+        return;
+    }
+
+    saveCheckinPlace();
+}
+
 
 function startLocation() {
     const element = document.getElementById("message");
@@ -102,8 +139,8 @@ function getDistance(lat1, lng1, lat2, lng2) {
 </HEAD>
 <BODY>
 <DIV id="message">Hello World !</DIV>
-<DIV id="lat">???</DIV>
-<DIV id="lng">???</DIV>
+<DIV id="lat"  style="display: none;">???</DIV>
+<DIV id="lng"  style="display: none;">???</DIV>
 <BUTTON type="button" onclick="startLocation()">開始</BUTTON>
 <BUTTON type="button" onclick="endLocation()">終了</BUTTON>
 <HR />
@@ -118,6 +155,8 @@ function getDistance(lat1, lng1, lat2, lng2) {
     <input type="range" id="scaleRange" min="1" max="1000" value="15">
 </div>
 
+<BUTTON id="checkin_button" type="button" onclick="checkinPlace()">近づくとボタンが表示されます</BUTTON>
+
 <script>
 const canvas = document.getElementById('radar');
 const ctx = canvas.getContext('2d');
@@ -126,12 +165,19 @@ const scaleInput = document.getElementById('scaleRange');
 // 1. データ設定 
 let currentPos = { lat: 34.1594, lng: 134.5028}; //１番霊山寺
 const locations = [
+    { name: "道頓堀", lat: 34.6687, lng: 135.5013 },
+    { name: "大阪国際空港", lat: 34.7862, lng: 135.4380 },
+    { name: "大阪城公園",lat: 35.68713, lng: 135.52629 },
     { name: "皇居外苑", lat: 35.6813, lng: 139.7582 },
     { name: "浜離宮", lat: 35.6596, lng: 139.7633 },
     { name: "浅草寺", lat: 35.7148, lng: 139.7967 },
-    { name: "久良岐公園", lat: 35.40551, lng: 139.60801 },
-    { name: "大阪城",lat: 35.68713, lng: 135.52629 },
-     { "id": 1, "pref": "徳島", "name": "霊山寺", "lat": 34.1594, "lng": 134.5028 },
+    { name: "山下公園", lat: 35.40551, lng: 139.60801 },
+    { name: "岡之山美術館", lat: 34.9995, lng: 134.9972 },
+    { name: "モニュメント", lat: 35.0000, lng: 135.0000 },
+    { name: "西脇公園",lat: 35.68713, lng: 135.52629 },
+    { name: "桜島", lat: 31.5925, lng: 130.6174 },
+    { name: "城山公園", lat: 31.5968, lng: 130.5496 },
+  { "id": 1, "pref": "徳島", "name": "霊山寺", "lat": 34.1594, "lng": 134.5028 },
   { "id": 2, "pref": "徳島", "name": "極楽寺", "lat": 34.1558, "lng": 134.4914 },
   { "id": 3, "pref": "徳島", "name": "金泉寺", "lat": 34.1461, "lng": 134.4608 },
   { "id": 4, "pref": "徳島", "name": "大日寺", "lat": 34.1519, "lng": 134.4251 },
@@ -238,8 +284,17 @@ function draw() {
         ctx.stroke();
     }
 
+    const btn = document.getElementById('checkin_button');
+    btn.disabled = true;    // 有効化する
+
+    loadCheckinPlace();
+
     // --- 景勝地 (ターゲット) ---
     locations.forEach(loc => {
+        if (g_visitedPlaces.includes(loc.name)) {
+            return;
+        }
+
         const dx = (loc.lng - currentPos.lng) * scale;
         const dy = (currentPos.lat - loc.lat) * scale;
         const x = centerX + dx;
@@ -251,19 +306,24 @@ function draw() {
         // レーダーの円内に収まる場合のみ描画
         const distFromCenter = Math.sqrt(dx*dx + dy*dy);
         if (distFromCenter < canvas.width / 2 - 10) {
-            ctx.beginPath();
-            ctx.arc(x, y, 7, 0, Math.PI * 2);
-            ctx.fillStyle = "#ffbb00";
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = "#ffbb00";
-            ctx.fill();
-            ctx.shadowBlur = 0; // 他への影響を防ぐ
-
             const element = document.getElementById("message");
             distance = getDistance(loc.lat,loc.lng, currentPos.lat, currentPos.lng);
             element.innerHTML = `${distance} kmです！`;     // バッククォートを使ってテンプレートリテラルで変数を表示
             // element.innerHTML = distance + "kmです！";
 
+            ctx.beginPath();
+            ctx.arc(x, y, 7, 0, Math.PI * 2);
+            ctx.shadowBlur = 15;
+            if (distance <= g_detection_range) {
+                ctx.fillStyle = "#ff2400";
+                ctx.shadowColor = "#ff2400";
+                displayCheckinButton(loc.id, loc.name);
+            } else {
+                ctx.fillStyle = "#ffbb00";
+                ctx.shadowColor = "#ffbb00";
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0; // 他への影響を防ぐ
 
         }
     });
