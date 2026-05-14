@@ -6,7 +6,7 @@
 <SCRIPT>
 
 g_watchId = null;
-const g_detection_range = 1.2;    //km
+const g_detection_range = 150;    //km
 
 // 1000ミリ秒（1秒）ごとに updateInfo を呼び出す 停止したい場合は clearInterval(intervalId);
 const intervalId = setInterval(setMessage, 3000);
@@ -42,6 +42,8 @@ function checkinPlace() {
     if (g_visitedPlaces.includes(btn.textContent)) {
         return;
     }
+
+    g_visitedPlaces.push(btn.textContent);
 
     saveCheckinPlace();
 }
@@ -165,18 +167,6 @@ const scaleInput = document.getElementById('scaleRange');
 // 1. データ設定 
 let currentPos = { lat: 34.1594, lng: 134.5028}; //１番霊山寺
 const locations = [
-    { name: "道頓堀", lat: 34.6687, lng: 135.5013 },
-    { name: "大阪国際空港", lat: 34.7862, lng: 135.4380 },
-    { name: "大阪城公園",lat: 35.68713, lng: 135.52629 },
-    { name: "皇居外苑", lat: 35.6813, lng: 139.7582 },
-    { name: "浜離宮", lat: 35.6596, lng: 139.7633 },
-    { name: "浅草寺", lat: 35.7148, lng: 139.7967 },
-    { name: "山下公園", lat: 35.40551, lng: 139.60801 },
-    { name: "岡之山美術館", lat: 34.9995, lng: 134.9972 },
-    { name: "モニュメント", lat: 35.0000, lng: 135.0000 },
-    { name: "西脇公園",lat: 35.68713, lng: 135.52629 },
-    { name: "桜島", lat: 31.5925, lng: 130.6174 },
-    { name: "城山公園", lat: 31.5968, lng: 130.5496 },
   { "id": 1, "pref": "徳島", "name": "霊山寺", "lat": 34.1594, "lng": 134.5028 },
   { "id": 2, "pref": "徳島", "name": "極楽寺", "lat": 34.1558, "lng": 134.4914 },
   { "id": 3, "pref": "徳島", "name": "金泉寺", "lat": 34.1461, "lng": 134.4608 },
