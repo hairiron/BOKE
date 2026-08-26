@@ -6,7 +6,7 @@
 <SCRIPT>
 
 g_watchId = null;
-const g_detection_range = 0.150;    //km
+const g_detection_range = 8.50;    //km(27番神峰寺)
 
 // 1000ミリ秒（1秒）ごとに updateInfo を呼び出す 停止したい場合は clearInterval(intervalId);
 const intervalId = setInterval(setMessage, 3000);
@@ -167,6 +167,8 @@ const scaleInput = document.getElementById('scaleRange');
 // 1. データ設定 
 let currentPos = { lat: 34.1594, lng: 134.5028}; //１番霊山寺
 const locations = [
+  { "id": "test00", "pref": "三重", "name": "ガリバーと遊ぶ（詳細）", "lat": 34.47070203531705, "lng": 136.8483125490192},
+  { "id": "test01", "pref": "三重", "name": "ガリバーと遊ぶ（4桁）", "lat": 34.4707, "lng": 136.8483},
   { "id": 1, "pref": "徳島", "name": "霊山寺", "lat": 34.1594, "lng": 134.5028 },
   { "id": 2, "pref": "徳島", "name": "極楽寺", "lat": 34.1558, "lng": 134.4914 },
   { "id": 3, "pref": "徳島", "name": "金泉寺", "lat": 34.1461, "lng": 134.4608 },
