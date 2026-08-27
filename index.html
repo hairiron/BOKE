@@ -324,6 +324,7 @@ function draw() {
         if (distFromCenter < canvas.width / 2 - 10) {
             const element = document.getElementById("message");
             distance = getDistance(loc.lat,loc.lng, currentPos.lat, currentPos.lng);
+            distance = Math.round(distance * 1000) / 1000;
             if (distance < min_distance ) {
                 min_distance = distance;                
             }
