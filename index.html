@@ -17,6 +17,23 @@ function displayCheckinButton(id, name) {
     btn.textContent = name;
 }
 
+function displayCheckinButtons(id, name, distance) {
+    
+    const div = document.getElementById('checkin_buttons');
+
+    const newButton = document.createElement('button');
+
+    newButton.textContent = `${name} (${distance})`;
+    newButton.id = id;
+
+    // （任意）ボタンがクリックされた時の処理を追加する
+    newButton.addEventListener('click', () => {
+        checkinPlace(id);
+    });
+
+    div.appendChild(newButton);
+}
+
 g_visitedPlaces = null;
 
 // データを取得して 配列に戻す
@@ -34,16 +51,18 @@ function saveCheckinPlace(){
     localStorage.setItem('visitedPlaces', JSON.stringify(g_visitedPlaces));
 }
 
-function checkinPlace() {
-    const btn = document.getElementById('checkin_button');
+function checkinPlace(id) {
+
+    msg = `${id}の登録処理を行います`;
+    alert(msg);
 
     loadCheckinPlace();
 
-    if (g_visitedPlaces.includes(btn.textContent)) {
+    if (g_visitedPlaces.includes(id)) {
         return;
     }
 
-    g_visitedPlaces.push(btn.textContent);
+    g_visitedPlaces.push(id);
 
     saveCheckinPlace();
 }
@@ -158,6 +177,7 @@ function getDistance(lat1, lng1, lat2, lng2) {
 </div>
 
 <BUTTON id="checkin_button" type="button" onclick="checkinPlace()">近づくとボタンが表示されます</BUTTON>
+<DIV id="checkin_buttons">複数のボタンが表示されます</DIV>
 
 <script>
 const canvas = document.getElementById('radar');
@@ -281,9 +301,13 @@ function draw() {
 
     loadCheckinPlace();
 
+    const containerDiv = document.getElementById('checkin_buttons');
+    containerDiv.replaceChildren();
+    min_distance = 9999999999;  //とんでもなく大きいあたい
+
     // --- 景勝地 (ターゲット) ---
     locations.forEach(loc => {
-        if (g_visitedPlaces.includes(loc.name)) {
+        if (g_visitedPlaces.includes(loc.id)) {
             return;
         }
 
@@ -300,7 +324,10 @@ function draw() {
         if (distFromCenter < canvas.width / 2 - 10) {
             const element = document.getElementById("message");
             distance = getDistance(loc.lat,loc.lng, currentPos.lat, currentPos.lng);
-            element.innerHTML = `${distance} kmです！`;     // バッククォートを使ってテンプレートリテラルで変数を表示
+            if (distance < min_distance ) {
+                min_distance = distance;                
+            }
+            element.innerHTML = `最も近いところまで ${min_distance} kmです！`;     // バッククォートを使ってテンプレートリテラルで変数を表示
             // element.innerHTML = distance + "kmです！";
 
             ctx.beginPath();
@@ -309,7 +336,8 @@ function draw() {
             if (distance <= g_detection_range) {
                 ctx.fillStyle = "#ff2400";
                 ctx.shadowColor = "#ff2400";
-                displayCheckinButton(loc.id, loc.name);
+                // displayCheckinButton(loc.id, loc.name);
+                displayCheckinButtons(loc.id, loc.name, distance);
             } else {
                 ctx.fillStyle = "#ffbb00";
                 ctx.shadowColor = "#ffbb00";
