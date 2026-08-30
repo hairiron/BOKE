@@ -315,16 +315,17 @@ function draw() {
         // レーダーの円内に収まる場合のみ描画
         const distFromCenter = Math.sqrt(dx*dx + dy*dy);
         if (distFromCenter < canvas.width / 2 - 10) {
-            distance = getDistance(loc.lat,loc.lng, currentPos.lat, currentPos.lng);
-            distance = Math.round(distance * 1000) / 1000;
-            if (distance < min_distance ) {
-                min_distance = distance;                
-            }
 
             const isDisplayBluePoint = g_visitedPlaces.includes(loc.id);
             if (isDisplayBluePoint  && !checkboxVisited.checked ) {
                 //既に行ったことがあるポイントで、表示しない設定の時は次のforEach要素へ
                 return;
+            }
+
+            distance = getDistance(loc.lat,loc.lng, currentPos.lat, currentPos.lng);
+            distance = Math.round(distance * 1000) / 1000;
+            if (distance < min_distance ) {
+                min_distance = distance;                
             }
 
             const element = document.getElementById("message");
