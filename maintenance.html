@@ -3,250 +3,87 @@
 <HEAD>
 <META charset="utf-8" />
 <TITLE>お遍路レーダー（メンテナンス）</TITLE>
+
+<script src="./utils.js"></script>
+
+
 <SCRIPT>
-
-function displayCheckinButtons(id, name, distance) {
-    
-    const div = document.getElementById('checkin_buttons');
-
-    const newButton = document.createElement('button');
-
-    newButton.textContent = `${name} (${distance}km)`;
-    newButton.id = id;
-
-    // （任意）ボタンがクリックされた時の処理を追加する
-    newButton.addEventListener('click', () => {
-        checkinPlace(id);
-    });
-
-    div.appendChild(newButton);
-}
-
-g_visitedPlaces = null;
-
-// データを取得して 配列に戻す
-function loadCheckinPlace(){
-    const savedData = localStorage.getItem('visitedPlaces');
-    g_visitedPlaces = JSON.parse(savedData);
-    if (g_visitedPlaces == null) {
-        g_visitedPlaces = [];
-    }
-    alert(g_visitedPlaces);
-}
-
-// 配列をデータとしてセーブする
-function saveCheckinPlace(){
-    // 配列を JSON文字列に変換して保存
-    localStorage.setItem('visitedPlaces', JSON.stringify(g_visitedPlaces));
-}
-
-function checkinPlace(id) {
-
-    msg = `${id}の登録処理を行います`;
-    // alert(msg);
-
-    loadCheckinPlace();
-
-    if (g_visitedPlaces.includes(id)) {
-        return;
-    }
-
-    g_visitedPlaces.push(id);
-
-    saveCheckinPlace();
-}
-
-
-function startLocation() {
-    const element = document.getElementById("message");
-    const element_lat = document.getElementById("lat");
-    const element_lng = document.getElementById("lng");
-
-    // ブラウザが対応しているか確認
-    if (!navigator.geolocation) {
-        element.innerText = "お使いのブラウザは位置情報に対応していません。";
-        return;
-    }
-
-    element.innerText = "取得中...";
-
-    // 位置情報を取得開始
-    g_watchId = navigator.geolocation.watchPosition(
-        (position) => {
-            here_lat = position.coords.latitude;  // 緯度
-            here_lng = position.coords.longitude; // 経度
-            // element.innerText = `緯度: ${here_lat}, 経度: ${here_lng}`;
-            element_lat.innerText = here_lat;
-            element_lng.innerText = here_lng;
-        },
-        (error) => {
-            element.innerText = `エラー: ${error.message}`;
-        },
-        {
-            // オプション設定
-            enableHighAccuracy: true, // 高精度な位置情報を要求（GPSなど）
-            timeout: 5000,            // タイムアウト時間（ミリ秒）
-            maximumAge: 0             // キャッシュされた位置情報の有効期限
-        }
-    );
-
-    return g_watchId;
-}
-
-function endLocation() {
-    navigator.geolocation.clearWatch(g_watchId);
-}
-
-function setMessage(){
-    const element_lat = document.getElementById("lat");
-    here_lat = element_lat.innerHTML;
-
-    const element_lng = document.getElementById("lng");
-    here_lng = element_lng.innerHTML;
-
-    //ドラゴンレーダ用の値セット
-    if (here_lat != "???") {
-        currentPos.lat = here_lat;
-    }
-    if (here_lng != "???") {
-        currentPos.lng = here_lng;
-    }
-
-    draw();
-}
-
-/**
- * 2地点の緯度経度から距離(km)を計算する関数
- */
-function getDistance(lat1, lng1, lat2, lng2) {
-  // 地球の半径 (km)
-  const R = 6371; 
-  
-  // 度をラジアンに変換
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLng / 2) * Math.sin(dLng / 2);
-            
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // 距離 (km)
-  
-  return distance;
-}
-
 
 </SCRIPT>
     <style>
-        body { background: #222; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        #radar-container { position: relative; margin-bottom: 20px; }
-        #radar { background: #1a4d1a; border: 8px solid #444; border-radius: 50%; box-shadow: 0 0 30px rgba(0,255,0,0.2); }
-        .controls { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; width: 300px; text-align: center; }
-        input[type=range] { width: 100%; cursor: pointer; }
+        /* body { background: #222; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; } */
+        /* .controls { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; width: 300px; text-align: center; } */
     </style>
 
 </HEAD>
 <BODY>
+<A href="./index.html">>>前の画面に戻る</A>
+<hr />
 <DIV id="message">Hello World !</DIV>
-<label>
-    <input type="checkbox" id="checkboxVisited">ここに表示させる</input>
-</label>
-
-
-<DIV id="checkin_buttons">複数のボタンが表示されます</DIV>
+<hr />
+<DIV id="checkin_buttons"></DIV>
 
 <script>
-
-function draw() {
-
-    const scale = parseFloat(scaleInput.value) * 10; // スライダーの値で倍率決定(この値で最大広域の表示も決まるので注意)
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // --- 背景のグリッド (同心円) ---
-    ctx.strokeStyle = "rgba(45, 106, 45, 0.8)";
-    ctx.lineWidth = 1;
-    for(let i=1; i<=6; i++) {
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, (canvas.width / 12) * i, 0, Math.PI * 2);
-        ctx.stroke();
+function togglePlace(id, checked) {
+    if (checked) {
+        util_checkinPlace(id);
+    } else {
+        util_removePlace(id);
     }
-
-    loadCheckinPlace();
-
-    const containerDiv = document.getElementById('checkin_buttons');
-    containerDiv.replaceChildren();
-    min_distance = 9999999999;  //とんでもなく大きいあたい
-
-    const checkboxVisited = document.getElementById("checkboxVisited");
-
-    // --- 景勝地 (ターゲット) ---
-    locations.forEach(loc => {
-
-        const dx = (loc.lng - currentPos.lng) * scale;
-        const dy = (currentPos.lat - loc.lat) * scale;
-        const x = centerX + dx;
-        const y = centerY + dy;
-        
-        // const element = document.getElementById("message");
-        // element.innerHTML = `計算中`;
-
-        // レーダーの円内に収まる場合のみ描画
-        const distFromCenter = Math.sqrt(dx*dx + dy*dy);
-        if (distFromCenter < canvas.width / 2 - 10) {
-
-            const isDisplayBluePoint = g_visitedPlaces.includes(loc.id);
-            if (isDisplayBluePoint  && !checkboxVisited.checked ) {
-                //既に行ったことがあるポイントで、表示しない設定の時は次のforEach要素へ
-                return;
-            }
-
-            distance = getDistance(loc.lat,loc.lng, currentPos.lat, currentPos.lng);
-            distance = Math.round(distance * 1000) / 1000;
-            if (distance < min_distance ) {
-                min_distance = distance;                
-            }
-
-            const element = document.getElementById("message");
-            element.innerHTML = `最も近いところまで ${min_distance} kmです！`;     // バッククォートを使ってテンプレートリテラルで変数を表示
-            // element.innerHTML = distance + "kmです！";
-
-            ctx.beginPath();
-            ctx.arc(x, y, 7, 0, Math.PI * 2);
-            ctx.shadowBlur = 15;
-            if (isDisplayBluePoint) {
-                ctx.fillStyle = "#00bbff";
-                ctx.shadowColor = "#00bbff";            
-            } else if (distance <= g_detection_range) {
-                ctx.fillStyle = "#ff2400";
-                ctx.shadowColor = "#ff2400";
-            } else {
-                ctx.fillStyle = "#ffbb00";
-                ctx.shadowColor = "#ffbb00";
-            }
-            ctx.fill();
-            ctx.shadowBlur = 0; // 他への影響を防ぐ
-
-            // 赤と青の場合があるが、いずれにせよ指定距離内ならボタンを表示する
-            if (distance <= g_detection_range) {
-                // displayCheckinButton(loc.id, loc.name);
-                displayCheckinButtons(loc.id, loc.name, distance);
-            }
-        }
-    });
-
-    // --- 現在地 (中心の矢印) ---
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY - 10);
-    ctx.lineTo(centerX - 7, centerY + 7);
-    ctx.lineTo(centerX + 7, centerY + 7);
-    ctx.closePath();
-    ctx.fillStyle = "#fff";
-    ctx.fill();
 }
 
-// 初期描画
-loadCheckinPlace();
+function displayCheckinButtons(id, name, checked) {
+    
+    const div = document.getElementById('checkin_buttons');
+
+    const newButton = document.createElement('input');
+
+    newButton.id = id;
+    newButton.type = "checkbox";
+    newButton.checked = checked;
+
+    // （任意）ボタンがクリックされた時の処理を追加する
+    newButton.addEventListener('change', () => {
+        togglePlace(id, newButton.checked);
+    });
+
+    const label = document.createElement('label');
+    label.appendChild(newButton);
+    label.appendChild(document.createTextNode(`${name} (${checked})`));
+
+    const br = document.createElement('br');
+
+    div.appendChild(label);
+    div.appendChild(br);
+}
+
+
+function draw() {
+    util_loadCheckinPlace();
+
+    const element = document.getElementById("message");
+    element.innerHTML = `処理開始`;
+
+        // --- 景勝地 (ターゲット) ---
+    g_util_locations.forEach(loc => {
+        
+        element.innerHTML = `${loc.name}処理中`;
+
+        const isDisplayBluePoint = g_util_visitedPlaces.includes(loc.id);
+        if (isDisplayBluePoint) {
+            //既に行ったことがあるポイントで、表示しない設定の時は次のforEach要素へ
+            //    return;
+        }
+
+        displayCheckinButtons(loc.id, loc.name, isDisplayBluePoint);
+        element.innerHTML = `処理終了`;
+    });
+
+    element.innerHTML = `処理終了`; 
+}
+
+// 描画
+draw();
 
 </script>
 
