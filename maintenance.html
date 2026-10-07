@@ -49,7 +49,8 @@ function displayCheckinButtons(id, name, checked) {
 
     const label = document.createElement('label');
     label.appendChild(newButton);
-    label.appendChild(document.createTextNode(`${name} (${checked})`));
+    label.appendChild(document.createTextNode(`${name}`));
+    // label.appendChild(document.createTextNode(`${name} (${checked})`));
 
     const br = document.createElement('br');
 
@@ -79,7 +80,7 @@ function draw() {
         element.innerHTML = `処理終了`;
     });
 
-    element.innerHTML = `処理終了`; 
+    element.innerHTML = `既に行ったことのある場所にチェックをつけてください`; 
 }
 
 // 描画

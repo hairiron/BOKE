@@ -126,6 +126,26 @@ function getDistance(lat1, lng1, lat2, lng2) {
         #radar { background: #1a4d1a; border: 8px solid #444; border-radius: 50%; box-shadow: 0 0 30px rgba(0,255,0,0.2); }
         .controls { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; width: 300px; text-align: center; }
         input[type=range] { width: 100%; cursor: pointer; }
+
+        #radarLinkButton {
+            position: absolute;
+            bottom: 15px;      /* 下からの位置（調整可能） */
+            right: 15px;       /* 右からの位置（調整可能） */
+            width: 60px;       /* 円の直径 */
+            height: 60px;      /* 円の直径 */
+            background-color: #888888; /* 赤色 */
+            border-radius: 50%; /* 正円にする */
+            cursor: pointer;   /* ホバー時に指マークにする */
+            z-index: 10;       /* Canvasより手前に表示 */
+            
+            /* レーダーのピンと同じような光るエフェクト */
+            box-shadow: 0 0 15px rgba(136, 136, 136, 0.6);
+            transition: transform 0.1s ease;
+        }
+        /* ボタンが押されたときに少し小さくする演出*/
+        #radarLinkButton:active {
+            transform: scale(0.9);
+        }
     </style>
 
 </HEAD>
@@ -142,6 +162,7 @@ function getDistance(lat1, lng1, lat2, lng2) {
 
 <div id="radar-container">
     <canvas id="radar" width="400" height="400"></canvas>
+    <div id="radarLinkButton"></div>
 </div>
 
 <div class="controls">
@@ -154,13 +175,8 @@ function getDistance(lat1, lng1, lat2, lng2) {
 
 
 <DIV id="checkin_buttons">複数のボタンが表示されます</DIV>
-<HR />
-<HR />
-<HR />
-<A href="maintenance.html">メンテナンス</A>
 
 <script>
-//import { APP_VERSION, util_loadCheckinPlace} from './utils.js';
 
 const canvas = document.getElementById('radar');
 const ctx = canvas.getContext('2d');
@@ -170,6 +186,10 @@ const scaleInput = document.getElementById('scaleRange');
 let currentPos = { lat: 34.1594, lng: 134.5028}; //１番霊山寺
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
+
+const redCircleRadius = 50;
+const redCircleX = canvas.width - redCircleRadius;
+const redCircleY = canvas.height - redCircleRadius;
 
 function draw() {
 
@@ -262,6 +282,12 @@ function draw() {
 
 // スライダーを動かしたときに再描画
 scaleInput.addEventListener('input', draw);
+
+// 右下の円(メンテナンス)ボタンを取得
+const linkButton = document.getElementById('radarLinkButton');
+linkButton.addEventListener('click', () => {
+    window.location.href = 'maintenance.html'; // 遷移先のURL
+});
 
 // 初期描画
 draw();
