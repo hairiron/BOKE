@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<HTML lang="ja">
+<HEAD>
+<META charset="utf-8" />
+<TITLE>お遍路レーダー（ご褒美）</TITLE>
+
+<script src="./utils.js"></script>
+
+
+<SCRIPT>
+
+</SCRIPT>
+    <style>
+        /* body { background: #222; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; } */
+        /* .controls { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; width: 300px; text-align: center; } */
+    </style>
+
+</HEAD>
+<BODY>
+<A href="./index.html">>>前の画面に戻る</A>
+<hr />
+<DIV id="message">Hello World !</DIV>
+<hr />
+<DIV id="reward_label"></DIV>
+
+<script>
+
+function displayReward(name) {
+    
+    const div = document.getElementById('reward_label');
+
+    const label = document.createElement('label');
+    label.appendChild(document.createTextNode(`${name}`));
+    // label.appendChild(document.createTextNode(`${name} (${checked})`));
+
+    const br = document.createElement('br');
+
+    div.appendChild(label);
+    div.appendChild(br);
+}
+
+
+function draw() {
+    util_loadCheckinPlace();
+
+    const element = document.getElementById("message");
+    element.innerHTML = `処理開始`;
+
+    visitedPrefecture = [];
+    //  景勝地 (ターゲット) ---
+    g_util_visitedPlaces.forEach(id => {
+        
+        element.innerHTML = `${id}処理中`;
+
+        g_util_locations.forEach(loc => {
+            if (!visitedPrefecture.includes(loc.pref)) {
+                visitedPrefecture.push(loc.pref);
+//                displayReward(loc.name);
+            }
+        });
+        element.innerHTML = `処理終了`;
+    });
+
+    visitedPrefecture.forEach(pref => {
+        element.innerHTML = `${pref}処理中`;
+        displayReward(`${pref}を踏破しました`);
+    });
+
+    element.innerHTML = `${visitedPrefecture.length}の都道府県に行ったことがあります`; 
+}
+
+// 描画
+draw();
+
+</script>
+
+</BODY>
+</HTML>

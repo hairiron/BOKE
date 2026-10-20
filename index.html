@@ -127,13 +127,13 @@ function getDistance(lat1, lng1, lat2, lng2) {
         .controls { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; width: 300px; text-align: center; }
         input[type=range] { width: 100%; cursor: pointer; }
 
-        #radarLinkButton {
+        #maintenanceButton {
             position: absolute;
             bottom: 15px;      /* 下からの位置（調整可能） */
             right: 15px;       /* 右からの位置（調整可能） */
             width: 60px;       /* 円の直径 */
             height: 60px;      /* 円の直径 */
-            background-color: #888888; /* 赤色 */
+            background-color: #888888; /* 灰色 */
             border-radius: 50%; /* 正円にする */
             cursor: pointer;   /* ホバー時に指マークにする */
             z-index: 10;       /* Canvasより手前に表示 */
@@ -143,7 +143,27 @@ function getDistance(lat1, lng1, lat2, lng2) {
             transition: transform 0.1s ease;
         }
         /* ボタンが押されたときに少し小さくする演出*/
-        #radarLinkButton:active {
+        #maintenanceButton:active {
+            transform: scale(0.9);
+        }
+
+        #rewardButton {
+            position: absolute;
+            bottom: 15px;      /* 下からの位置（調整可能） */
+            left: 15px;       /* 左からの位置（調整可能） */
+            width: 60px;       /* 円の直径 */
+            height: 60px;      /* 円の直径 */
+            background-color: #888888; /* 灰色 */
+            border-radius: 50%; /* 正円にする */
+            cursor: pointer;   /* ホバー時に指マークにする */
+            z-index: 10;       /* Canvasより手前に表示 */
+            
+            /* レーダーのピンと同じような光るエフェクト */
+            box-shadow: 0 0 15px rgba(136, 136, 136, 0.6);
+            transition: transform 0.1s ease;
+        }
+        /* ボタンが押されたときに少し小さくする演出*/
+        #rewardButton:active {
             transform: scale(0.9);
         }
     </style>
@@ -162,7 +182,8 @@ function getDistance(lat1, lng1, lat2, lng2) {
 
 <div id="radar-container">
     <canvas id="radar" width="400" height="400"></canvas>
-    <div id="radarLinkButton"></div>
+    <div id="rewardButton"></div>
+    <div id="maintenanceButton"></div>
 </div>
 
 <div class="controls">
@@ -283,9 +304,15 @@ function draw() {
 // スライダーを動かしたときに再描画
 scaleInput.addEventListener('input', draw);
 
+// 左下の円(メンテナンス)ボタンを取得
+const RewardButton = document.getElementById('rewardButton');
+RewardButton.addEventListener('click', () => {
+    window.location.href = 'reward.html'; // 遷移先のURL
+});
+
 // 右下の円(メンテナンス)ボタンを取得
-const linkButton = document.getElementById('radarLinkButton');
-linkButton.addEventListener('click', () => {
+const maintenanceButton = document.getElementById('maintenanceButton');
+maintenanceButton.addEventListener('click', () => {
     window.location.href = 'maintenance.html'; // 遷移先のURL
 });
 
