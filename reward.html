@@ -53,9 +53,11 @@ function draw() {
         element.innerHTML = `${id}処理中`;
 
         g_util_locations.forEach(loc => {
-            if (!visitedPrefecture.includes(loc.pref)) {
-                visitedPrefecture.push(loc.pref);
-//                displayReward(loc.name);
+            if (loc.id == id) { //達成しているIDの情報を取り出す
+                if (!visitedPrefecture.includes(loc.pref)) {
+                    visitedPrefecture.push(loc.pref);
+    //                displayReward(loc.name);
+                }
             }
         });
         element.innerHTML = `処理終了`;
