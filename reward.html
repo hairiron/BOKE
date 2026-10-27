@@ -56,7 +56,7 @@ function draw() {
             if (loc.id == id) { //達成しているIDの情報を取り出す
                 if (!visitedPrefecture.includes(loc.pref)) {
                     visitedPrefecture.push(loc.pref);
-    //                displayReward(loc.name);
+    //                displayReward(loc.name);      // 一つ一つを表示する場合
                 }
             }
         });
@@ -68,7 +68,66 @@ function draw() {
         displayReward(`${pref}を踏破しました`);
     });
 
-    element.innerHTML = `${visitedPrefecture.length}の都道府県に行ったことがあります`; 
+    // 東北制覇
+    if (visitedPrefecture.includes("青森") && visitedPrefecture.includes("岩手") && visitedPrefecture.includes("宮城") && visitedPrefecture.includes("秋田") && visitedPrefecture.includes("山形") && visitedPrefecture.includes("徳島")) {
+        displayReward("★東北を制覇しました★");
+    }
+
+    // 関東制覇
+    if (visitedPrefecture.includes("茨城") && visitedPrefecture.includes("栃木") && visitedPrefecture.includes("群馬") && visitedPrefecture.includes("埼玉") && visitedPrefecture.includes("千葉") && visitedPrefecture.includes("東京") && visitedPrefecture.includes("神奈川")) {
+        displayReward("★東北を制覇しました★");
+    }
+
+    // 中部制覇
+    if (visitedPrefecture.includes("新潟") && visitedPrefecture.includes("富山") && visitedPrefecture.includes("石川") && visitedPrefecture.includes("福井") && visitedPrefecture.includes("山梨") && visitedPrefecture.includes("長野") && visitedPrefecture.includes("岐阜") && visitedPrefecture.includes("静岡") && visitedPrefecture.includes("愛知")) {
+        displayReward("★中部を制覇しました★");
+    }
+
+    // 近畿制覇
+    if (visitedPrefecture.includes("三重") && visitedPrefecture.includes("滋賀") && visitedPrefecture.includes("京都") && visitedPrefecture.includes("大阪") && visitedPrefecture.includes("兵庫") && visitedPrefecture.includes("奈良") && visitedPrefecture.includes("和歌山")) {
+        displayReward("★近畿を制覇しました★");
+    }
+
+    // 北陸制覇
+    if (visitedPrefecture.includes("富山") && visitedPrefecture.includes("石川") && visitedPrefecture.includes("福井")) {
+        displayReward("★北陸を制覇しました★");
+    }
+
+    // 甲信越制覇
+    if (visitedPrefecture.includes("山梨") && visitedPrefecture.includes("長野") && visitedPrefecture.includes("新潟")) {
+        displayReward("★甲信越を制覇しました★");
+    }
+
+    // 東海４県
+    if (visitedPrefecture.includes("岐阜") && visitedPrefecture.includes("静岡") && visitedPrefecture.includes("愛知") && visitedPrefecture.includes("三重")) {
+        displayReward("★東海４県を制覇しました★");
+    }
+
+    // 東海３県
+    if (visitedPrefecture.includes("岐阜") &&  visitedPrefecture.includes("愛知") && visitedPrefecture.includes("三重")) {
+        displayReward("★東海３県を制覇しました★");
+    }
+
+    // 中国制覇
+    if (visitedPrefecture.includes("鳥取") && visitedPrefecture.includes("島根") && visitedPrefecture.includes("岡山") && visitedPrefecture.includes("広島") && visitedPrefecture.includes("山口")) {
+        displayReward("★中国を制覇しました★");
+    }
+
+    // 四国制覇
+    if (visitedPrefecture.includes("徳島") && visitedPrefecture.includes("高知") && visitedPrefecture.includes("愛媛") && visitedPrefecture.includes("香川")) {
+        displayReward("★四国を制覇しました★");
+    }
+
+    // 九州制覇
+    if (visitedPrefecture.includes("福岡") && visitedPrefecture.includes("佐賀") && visitedPrefecture.includes("長崎") && visitedPrefecture.includes("熊本") && visitedPrefecture.includes("大分") && visitedPrefecture.includes("宮崎") && visitedPrefecture.includes("鹿児島") && visitedPrefecture.includes("沖縄")) {
+        displayReward("★九州を制覇しました★");
+    }
+
+    if (visitedPrefecture.length == 47) {
+        element.innerHTML = `★★★日本の全都道府県を制覇★★★`; 
+    } else {
+        element.innerHTML = `${visitedPrefecture.length}の都道府県に行ったことがあります`; 
+    }
 }
 
 // 描画
