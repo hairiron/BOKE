@@ -8,10 +8,11 @@
 <SCRIPT>
 
 g_watchId = null;
-const g_detection_range = 8.50;    //km(27番神峰寺)
+const g_detection_range = 8.50; //km(27番神峰寺)
+const g_timer_range = 10490;          //ジョイナーの記録100mを10.49s    単位ミリ秒
 
-// 1000ミリ秒（1秒）ごとに updateInfo を呼び出す 停止したい場合は clearInterval(intervalId);
-const intervalId = setInterval(setMessage, 3000);
+// 指定ミリ秒ごとに updateInfo を呼び出す 停止したい場合は clearInterval(intervalId);
+const intervalId = setInterval(setMessage, g_timer_range);
 
 function displayCheckinButtons(id, name, distance) {
     
@@ -107,8 +108,8 @@ function setMessage(){
 
     if (g_walking_counter > 1) {
         diff_distance = getDistance(g_beforePos.lat, g_beforePos.lng, currentPos.lat, currentPos.lng);
-        if (diff_distance == 0 || diff_distance > 0.03) {
-            ///全く動いてなかったり、3秒間で30mより多く動いている場合はむしろ危険なのでカウントしない
+        if (diff_distance == 0) {
+            ///全く動いてない場合はすぐ抜ける
             return;
         }
 
@@ -117,8 +118,10 @@ function setMessage(){
         if (g_total_walk == null) {
             g_total_walk = 0;
         }
-        g_total_walk = g_total_walk + diff_distance;
-        localStorage.setItem('totalWalk', JSON.stringify(g_total_walk));
+        if (diff_distance < 0.1) {  //ジョイナーの100m記録より少ない場合のみ正常な値と判断
+            g_total_walk = g_total_walk + diff_distance;
+            localStorage.setItem('totalWalk', JSON.stringify(g_total_walk));
+        }
     }
     g_beforePos.lat = currentPos.lat;
     g_beforePos.lng = currentPos.lng; 
