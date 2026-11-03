@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<HTML lang="ja">
+<HEAD>
+<META charset="utf-8" />
+<TITLE>お遍路レーダー（プロフィール）</TITLE>
+
+<script src="./utils.js"></script>
+
+
+<SCRIPT>
+
+</SCRIPT>
+    <style>
+        /* body { background: #222; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; } */
+        /* .controls { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; width: 300px; text-align: center; } */
+    </style>
+
+</HEAD>
+<BODY>
+<A href="./index.html">>>前の画面に戻る</A>
+<hr />
+<DIV id="message">Hello World !</DIV>
+<hr />
+<DIV id="reward_label"></DIV>
+
+<script>
+
+function draw() {
+
+    const element = document.getElementById("message");
+    element.innerHTML = `処理開始`;
+
+    element.innerHTML = `処理終了`;
+}
+
+// 描画
+draw();
+localStorage.setItem('totalWalk', JSON.stringify(0));   //テスト用。距離クリア
+
+</script>
+
+</BODY>
+</HTML>
