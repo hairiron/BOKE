@@ -42,7 +42,7 @@ function checkinPlace(id) {
 
 let g_walking_counter = 0;
 let g_beforePos = { lat: 0, lng: 0}; 
-let g_total_walk = 0;
+//let g_total_walk = 0;
 
 function startLocation() {
     const element = document.getElementById("message");
@@ -112,15 +112,10 @@ function setMessage(){
             ///全く動いてない場合はすぐ抜ける
             return;
         }
-
-        let total_walk_data = localStorage.getItem('totalWalk');
-        g_total_walk = JSON.parse(total_walk_data);
-        if (g_total_walk == null) {
-            g_total_walk = 0;
-        }
+        
         if (diff_distance < 0.1) {  //ジョイナーの100m記録より少ない場合のみ正常な値と判断
-            g_total_walk = g_total_walk + diff_distance;
-            localStorage.setItem('totalWalk', JSON.stringify(g_total_walk));
+            const new_total_walk_data = util_loadTotalWalk() + diff_distance;
+            util_saveTotalWalk(new_total_walk_data);
         }
     }
     g_beforePos.lat = currentPos.lat;
@@ -376,15 +371,7 @@ maintenanceButton.addEventListener('click', () => {
 
 // 初期描画
 startLocation();
-setMessage();
-
-// 読み込み時に現在のトータル距離をアラート表示するテスト
-let total_walk_data = localStorage.getItem('totalWalk');
-const start_total_walk = JSON.parse(total_walk_data);
-alert(`今まで歩いた距離は ${start_total_walk} kmなのだ\n今日も健康のために頑張って歩くのだ！`);
-
 draw();
-setMessage();
 
 </script>
 

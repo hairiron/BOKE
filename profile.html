@@ -21,7 +21,7 @@
 <hr />
 <DIV id="message">Hello World !</DIV>
 <hr />
-<DIV id="reward_label"></DIV>
+<DIV id="profile_label"></DIV>
 
 <script>
 
@@ -30,12 +30,12 @@ function draw() {
     const element = document.getElementById("message");
     element.innerHTML = `処理開始`;
 
-    element.innerHTML = `処理終了`;
+    const now_total_walk = util_loadTotalWalk() * 1000 / 1000;  //Math.round(util_loadTotalWalk() * 1000) / 1000;
+    element.innerHTML = `現在の歩いた距離　${now_total_walk}km`;
 }
 
 // 描画
 draw();
-localStorage.setItem('totalWalk', JSON.stringify(0));   //テスト用。距離クリア
 
 </script>
 

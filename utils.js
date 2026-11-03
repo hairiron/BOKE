@@ -2,7 +2,26 @@
 //export const APP_VERSION = "1.0.1";
 const APP_VERSION = "1.0.1";
 
+/////////////////////////////////////////////////////////////////////////////////////////
+function util_loadTotalWalk(){
+    const savedData = localStorage.getItem('totalWalk');
+    g_util_total_walk_data = JSON.parse(savedData);
+    if (g_util_total_walk_data == null) {
+        g_util_total_walk_data = 0;
+    }
+    return g_util_total_walk_data;
+}
 
+function util_saveTotalWalk(new_total_walk){
+    localStorage.setItem('totalWalk', JSON.stringify(new_total_walk));
+
+    return;
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
 let g_util_visitedPlaces = null;
 
 // データを取得して 配列に戻す
