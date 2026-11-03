@@ -107,8 +107,8 @@ function setMessage(){
 
     if (g_walking_counter > 1) {
         diff_distance = getDistance(g_beforePos.lat, g_beforePos.lng, currentPos.lat, currentPos.lng);
-        if (diff_distance == 0 || diff_distance > 0.01) {
-            ///全く動いてなかったり、3秒間で10mより多く動いている場合はむしろ危険なのでカウントしない
+        if (diff_distance == 0 || diff_distance > 0.03) {
+            ///全く動いてなかったり、3秒間で30mより多く動いている場合はむしろ危険なのでカウントしない
             return;
         }
 
