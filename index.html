@@ -369,7 +369,8 @@ maintenanceButton.addEventListener('click', () => {
     window.location.href = 'maintenance.html'; // 遷移先のURL
 });
 
-// 初期描画
+// 初期処理
+util_getUserProfile();  //初めてのアクセスで生年月日をセットするため
 startLocation();
 draw();
 

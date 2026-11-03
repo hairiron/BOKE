@@ -2,6 +2,27 @@
 //export const APP_VERSION = "1.0.1";
 const APP_VERSION = "1.0.1";
 
+function util_getUserProfile() {
+    const savedData = localStorage.getItem('birthday');
+    birthday = JSON.parse(savedData);
+    if (birthday == null) {
+        const today = new Date();
+        const year = today.getFullYear(); // 年 (例: 2026)
+        const month = today.getMonth() + 1; // 月 (0から始まるため+1が必要)
+        const date = today.getDate(); // 日
+        birthday = `${year}-${month}-${date}`;
+        localStorage.setItem('birthday', JSON.stringify(birthday));
+    }
+
+    const date1 = new Date(birthday); // 任意の日付
+    const date2 = new Date(); // 現在の日付
+
+    const diffInMilliseconds = date2 - date1;    // ミリ秒単位の差を計算
+    const diffInDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));    // ミリ秒を日数に変換
+
+    return { name: "僕", birth_day: birthday, days_old: diffInDays, is_birthday : (date1.getMonth() == date2.getMonth() && date1.getDate() == date2.getDate())};
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 function util_loadTotalWalk(){
     const savedData = localStorage.getItem('totalWalk');
