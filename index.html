@@ -231,7 +231,8 @@ function getDistance(lat1, lng1, lat2, lng2) {
 <!-- <BUTTON type="button" onclick="setMessage('公園との距離は', park.lat, park.lng)">手動で距離を計算</BUTTON> -->
 
 <div id="radar-container">
-    <canvas id="radar" width="400" height="400"></canvas>
+    <!-- <canvas id="radar" width="400" height="400"></canvas> -->
+    <canvas id="radar"></canvas>
     <div id="profileButton"></div>
     <div id="rewardButton"></div>
     <div id="maintenanceButton"></div>
@@ -374,15 +375,18 @@ maintenanceButton.addEventListener('click', () => {
     window.location.href = 'maintenance.html'; // 遷移先のURL
 });
 
+// 初期描画
+startLocation();
+setMessage();
 
 // 読み込み時に現在のトータル距離をアラート表示するテスト
 let total_walk_data = localStorage.getItem('totalWalk');
 const start_total_walk = JSON.parse(total_walk_data);
 alert(`今まで歩いた距離は ${start_total_walk} kmなのだ\n今日も健康のために頑張って歩くのだ！`);
 
-// 初期描画
 draw();
-startLocation();
+setMessage();
+
 </script>
 
 </BODY>
