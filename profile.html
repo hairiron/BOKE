@@ -10,10 +10,11 @@
 <SCRIPT>
 
 </SCRIPT>
-    <style>
-        /* body { background: #222; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; } */
-        /* .controls { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; width: 300px; text-align: center; } */
-    </style>
+<style>
+    /* body { background: #222; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; } */
+    /* .controls { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; width: 300px; text-align: center; } */
+    .no-break { display: inline;}
+</style>
 
 </HEAD>
 <BODY>
@@ -21,9 +22,15 @@
 <hr />
 <DIV id="message">Hello World !</DIV>
 <hr />
-<DIV id="profile_name"></DIV>
-<DIV id="profile_birthday"></DIV>
+<TABLE>
+<TR><TD>名前：</TD><TD><DIV class="no-break" id="profile_name"></DIV></TD></TR>
+<TR><TD>生年月日：</TD><TD><DIV id="profile_birthday"></DIV></TD></TR>
+<TR><TD>歩いた距離：</TD><TD><DIV id="profile_totalwalk"></DIV></TD></TR>
+</TABLE>
+<BR />
 <DIV id="profile_memo"></DIV>
+<BR />
+<TABLE id="profile_history" />
 
 <script>
 
@@ -38,15 +45,63 @@ function draw() {
     const user_profile = util_getUserProfile();
     document.getElementById("profile_name").innerHTML = user_profile.name;
     document.getElementById("profile_birthday").innerHTML = user_profile.birth_day;
+    document.getElementById("profile_totalwalk").innerHTML = `${now_total_walk}km`;
 
-    memo = `今日は生まれてから　${user_profile.days_old}　日目。`;
-    memo = memo + `生まれてから歩いた距離は　${now_total_walk}km。`;
+    let memo = `今日は生まれてから　${user_profile.days_old}日目なのだ。`;
+
+    let henro_times = now_total_walk/1200;
+    memo = memo + `生まれてから歩いた距離は　${now_total_walk}km、四国お遍路だと${henro_times}週分なのだ。`;
+    if (henro_times >= 99) {
+        memo = memo + `お札の色は錦なのだ。`;
+    } else if (henro_times >= 49) {
+        memo = memo + `お札の色は金なのだ。`;
+    } else if (henro_times >= 24) {
+        memo = memo + `お札の色は銀なのだ。`;
+    } else if (henro_times >= 7) {
+        memo = memo + `お札の色は赤なのだ。`;
+    } else if (henro_times >= 4) {
+        memo = memo + `お札の色は青なのだ。`;
+    } else if (henro_times >= 1) {
+        memo = memo + `お札の色はまだ白なのだ。`;
+    }
+
     if (user_profile.is_birthday) {
         memo = memo + `なんと今日は誕生日なのだ。`;
     }
     document.getElementById("profile_memo").innerHTML = memo;
+    message_element.innerHTML = `メモの作成が終了しました`;
 
-    message_element.innerHTML = `プロファイルの取得が終了しました`;
+    let history = "";
+    for ( var i = 0;  i < user_profile.days_old;  i++) {
+        if (i==0) {
+            history = history + `${i}日目 僕は生まれたのだ。生まれたというか、自覚したのだ。いや自覚したから生まれたのかもしれないのだ。まぁどっちでもいいのだ。ともかく僕は生まれて、近くに光をみつけたのだ。<BR/>`;
+        }
+        if (i==1) {
+            history = history + `${i}日目 僕は次の朝を迎えたのだ。別の光に呼ばれた気がしたのだ。二つ目の光なのだ。なぜかわからないけど、僕はこれは修行だと直感したのだ。<BR/>`
+        }
+        if (i==2) {
+            history = history + `${i}日目 僕はまた次の朝を迎え、また別の光に呼ばれた気がしたのだ。<BR/>`
+        }
+        if (i==3) {
+            history = history + `${i}日目 どんどん増えていくのだ。<BR/>`
+        }
+        if (i==4) {
+            history = history + `${i}日目 また増えたのだ。見ていても何も変化しないのだ。<BR/>`
+        }
+        if (i==5) {
+            history = history + `${i}日目 見てるだけだから、何も変化しないのか？<BR/>`
+        }
+        if (i==6) {
+            history = history + `${i}日目 光の増え方に負けないように、何かしないといけないのだ。<BR/>`
+        }
+        if (i==7) {
+            history = history + `${i}日目 一週間たったのだ。ボケ防止のために、僕は毎日歩くことにしたのだ。これが僕の修行の始まりなのだ。<BR/>`
+        }
+    }
+    document.getElementById("profile_history").innerHTML = history;
+    message_element.innerHTML = `ヒストリーの作成が終了しました`;
+
+    message_element.innerHTML = `プロフィールの集計がすべて終了しました`;
 
 }
 
