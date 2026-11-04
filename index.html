@@ -118,8 +118,9 @@ function setMessage(){
             util_saveTotalWalk(new_total_walk_data);
         }
     }
+    localStorage.setItem('currentpos', JSON.stringify(currentPos));
     g_beforePos.lat = currentPos.lat;
-    g_beforePos.lng = currentPos.lng; 
+    g_beforePos.lng = currentPos.lng;
 }
 
 /**
@@ -249,8 +250,15 @@ const canvas = document.getElementById('radar');
 const ctx = canvas.getContext('2d');
 const scaleInput = document.getElementById('scaleRange');
 
-// 1. データ設定 
+// データ設定 
 let currentPos = { lat: 34.1594, lng: 134.5028}; //１番霊山寺
+
+const savedData = localStorage.getItem('currentpos');
+before_currentpos = JSON.parse(savedData);
+if (before_currentpos != null) {
+    currentPos = before_currentpos;
+} 
+
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 
