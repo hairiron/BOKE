@@ -291,7 +291,7 @@ function draw() {
 
     const checkboxVisited = document.getElementById("checkboxVisited");
 
-    let days_old_counter = user_profile.days_old;
+    let days_old_counter = user_profile.days_old + 6;       //最初から光が少ないと寂しいので7つ表示する(当日が含まれるので0～6の７つ)
 
     g_util_locations.forEach(loc => {
 
