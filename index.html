@@ -259,6 +259,8 @@ if (before_currentpos != null) {
     currentPos = before_currentpos;
 } 
 
+const user_profile = util_getUserProfile();
+
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 
@@ -289,8 +291,15 @@ function draw() {
 
     const checkboxVisited = document.getElementById("checkboxVisited");
 
-    // --- 景勝地 (ターゲット) ---
+    let days_old_counter = user_profile.days_old;
+
     g_util_locations.forEach(loc => {
+
+        if (days_old_counter < 0) {
+            return;
+        } 
+        // alert(days_old_counter);
+        days_old_counter = days_old_counter - 1;
 
         const dx = (loc.lng - currentPos.lng) * scale;
         const dy = (currentPos.lat - loc.lat) * scale;
